@@ -13,6 +13,8 @@ Submodules:
 | `ear-docker` | Dockerfile for Payara with EAR deployment
 | `war-docker` | Dockerfile for Payara with WAR deployment
 
+[./appserver.diff] contains a patch for this issue.
+
 
 ## Scenario
 
@@ -126,7 +128,7 @@ The bottom of the page prints each well-known ClassLoader:
 
 ## Test cases with default class loading
 
-- Disable Extreme Classloading Isolation by removing the `whitelist-package`s from [ear/src/main/application/META-INF/glassfish-application.xml]
+- Disable Extreme Classloading Isolation by removing the `whitelist-package`s from [./ear/src/main/application/META-INF/glassfish-application.xml]
 - Build and run the Docker image
 
 ### 1. No whitelisting - Class accessibility
@@ -177,11 +179,11 @@ The bottom of the page prints each well-known ClassLoader:
 **Actual result:**
 
 - `com/github/rtwruck/web/ClassLoadedFromWar.class` OK
-- `com/github/rtwruck/app/ClassLoadedFromEarLib.class` is found twice with the same URL by the Webapp ClassLoader and once when loaded from the other ones
-- `com/github/rtwruck/common/ClassLoadedFromCommonLib.class` is found twice with the same URL by any ClassLoader
-- `org/objectweb/asm/WhitelistedClassLoadedFromCommonLib.class` is found twice with the same URL by any ClassLoader
-- `org/apache/taglibs/standard/Version.class` is found twice with the same URL by any ClassLoader
-- `org/objectweb/asm/MethodTooLargeException.class` is found twice with the same URL by any ClassLoader
+- `com/github/rtwruck/app/ClassLoadedFromEarLib.class` **is found twice with the same URL by the Webapp ClassLoader and once when loaded from the other ones**
+- `com/github/rtwruck/common/ClassLoadedFromCommonLib.class` **is found twice with the same URL by any ClassLoader**
+- `org/objectweb/asm/WhitelistedClassLoadedFromCommonLib.class` **is found twice with the same URL by any ClassLoader**
+- `org/apache/taglibs/standard/Version.class` **is found twice with the same URL by any ClassLoader**
+- `org/objectweb/asm/MethodTooLargeException.class` **is found twice with the same URL by any ClassLoader**
 
 **Payara 4:**
 
@@ -198,11 +200,11 @@ The bottom of the page prints each well-known ClassLoader:
 
 **Actual result:**
 
-- `org/objectweb/asm/ClassTooLargeException.class` is loaded from the EAR ClassLoader (`app-jar`)
+- `org/objectweb/asm/ClassTooLargeException.class` **is loaded from the EAR ClassLoader (`app-jar`)**
 
 **Payara 4:**
 
-- `org/objectweb/asm/ClassTooLargeException.class` is loaded from the common ClassLoader (`common-jar`)
+- `org/objectweb/asm/ClassTooLargeException.class` **is loaded from the common ClassLoader (`common-jar`)**
 
 
 ### 4. No whitelisting - EAR class sharing
@@ -243,7 +245,7 @@ The bottom of the page prints each well-known ClassLoader:
 
 ## Test cases with Extreme Classloading Isolation
 
-- Enable Extreme Classloading Isolation by adding the `whitelist-package`s in [ear/src/main/application/META-INF/glassfish-application.xml]
+- Enable Extreme Classloading Isolation by adding the `whitelist-package`s in [./ear/src/main/application/META-INF/glassfish-application.xml]
 - Build and run the Docker image
 
 ### 6. Whitelisting - Class accessibility
@@ -267,7 +269,7 @@ The bottom of the page prints each well-known ClassLoader:
 **Actual result:**
 
 - `com/github/rtwruck/web/ClassLoadedFromWar.class` OK
-- `com/github/rtwruck/app/ClassLoadedFromEarLib.class` is accessible but loaded from the Webapp ClassLoader
+- `com/github/rtwruck/app/ClassLoadedFromEarLib.class` **is accessible but loaded from the Webapp ClassLoader**
 - `com/github/rtwruck/common/ClassLoadedFromCommonLib.class` OK
 - `org/objectweb/asm/WhitelistedClassLoadedFromCommonLib.class` OK
 - `org/apache/taglibs/standard/Version.class` OK
@@ -299,11 +301,11 @@ The bottom of the page prints each well-known ClassLoader:
 **Actual result:**
 
 - `com/github/rtwruck/web/ClassLoadedFromWar.class` OK
-- `com/github/rtwruck/app/ClassLoadedFromEarLib.class` is found twice with the same URL when loaded from the Webapp ClassLoader and once when loaded from the other ones
-- `com/github/rtwruck/common/ClassLoadedFromCommonLib.class` is found twice with the same URL in any ClassLoader
-- `org/objectweb/asm/WhitelistedClassLoadedFromCommonLib.class` is found twice with the same URL in any ClassLoader
-- `org/apache/taglibs/standard/Version.class` is found twice with the same URL in any ClassLoader
-- `org/objectweb/asm/ClassWriter.class` is found twice with the same URL in any ClassLoader
+- `com/github/rtwruck/app/ClassLoadedFromEarLib.class` **is found twice with the same URL when loaded from the Webapp ClassLoader and once when loaded from the other ones**
+- `com/github/rtwruck/common/ClassLoadedFromCommonLib.class` **is found twice with the same URL in any ClassLoader**
+- `org/objectweb/asm/WhitelistedClassLoadedFromCommonLib.class` **is found twice with the same URL in any ClassLoader**
+- `org/apache/taglibs/standard/Version.class` **is found twice with the same URL in any ClassLoader**
+- `org/objectweb/asm/ClassWriter.class` **is found twice with the same URL in any ClassLoader**
 
 **Payara 4:**
 
@@ -320,11 +322,11 @@ The bottom of the page prints each well-known ClassLoader:
 
 **Actual result:**
 
-- `org/objectweb/asm/ClassTooLargeException.class` is loaded from the EAR ClassLoader (`app-jar`)
+- `org/objectweb/asm/ClassTooLargeException.class` **is loaded from the EAR ClassLoader (`app-jar`)**
 
 **Payara 4:**
 
-- `org/objectweb/asm/ClassTooLargeException.class` is loaded from the common ClassLoader (`common-jar`)
+- `org/objectweb/asm/ClassTooLargeException.class` **is loaded from the common ClassLoader (`common-jar`)**
 
 
 ### 9. Whitelisting - EAR lib class sharing
@@ -338,7 +340,7 @@ The bottom of the page prints each well-known ClassLoader:
 
 **Actual result:**
 
-- `com/github/rtwruck/app/ClassLoadedFromEarLib.class` has a different ID and ClassLoader in each Webapp
+- `com/github/rtwruck/app/ClassLoadedFromEarLib.class` **has a different ID and ClassLoader in each Webapp**
 
 **Payara 4:**
 

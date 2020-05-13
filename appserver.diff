@@ -1,0 +1,78 @@
+diff --git a/appserver/deployment/javaee-full/src/main/java/org/glassfish/javaee/full/deployment/EarClassLoader.java b/appserver/deployment/javaee-full/src/main/java/org/glassfish/javaee/full/deployment/EarClassLoader.java
+index 4c1cab7bfb..8fb9598aba 100644
+--- a/appserver/deployment/javaee-full/src/main/java/org/glassfish/javaee/full/deployment/EarClassLoader.java
++++ b/appserver/deployment/javaee-full/src/main/java/org/glassfish/javaee/full/deployment/EarClassLoader.java
+@@ -147,12 +147,13 @@ public class EarClassLoader extends ASURLClassLoader
+ 
+     @Override
+     protected String getClassLoaderName() {
+-        return "EarClassLoader";
++        return "EarClassLoader (whitelist="+application.isWhitelistEnabled()+")";
+     }
+ 
+     @Override
+     protected boolean isWhitelistEnabled() {
+-        return application.isWhitelistEnabled();
++//        return application.isWhitelistEnabled();
++        return false;
+     }
+ 
+     @Override
+diff --git a/appserver/deployment/javaee-full/src/main/java/org/glassfish/javaee/full/deployment/EarHandler.java b/appserver/deployment/javaee-full/src/main/java/org/glassfish/javaee/full/deployment/EarHandler.java
+index 07b024899e..a1f1595a14 100644
+--- a/appserver/deployment/javaee-full/src/main/java/org/glassfish/javaee/full/deployment/EarHandler.java
++++ b/appserver/deployment/javaee-full/src/main/java/org/glassfish/javaee/full/deployment/EarHandler.java
+@@ -352,7 +352,7 @@ public class EarHandler extends AbstractArchiveHandler implements CompositeHandl
+             final EarLibClassLoader earLibCl = AccessController.doPrivileged(new PrivilegedAction<EarLibClassLoader>() {
+                 @Override
+                 public EarLibClassLoader run() {
+-                    return new EarLibClassLoader(earLibURLs, parent);
++                    return new EarLibClassLoader(earLibURLs, parent, holder.app);
+                 }
+             });
+             String clDelegate = holder.app.getClassLoadingDelegate();
+diff --git a/appserver/deployment/javaee-full/src/main/java/org/glassfish/javaee/full/deployment/EarLibClassLoader.java b/appserver/deployment/javaee-full/src/main/java/org/glassfish/javaee/full/deployment/EarLibClassLoader.java
+index 7cf35054ab..ba56d107eb 100644
+--- a/appserver/deployment/javaee-full/src/main/java/org/glassfish/javaee/full/deployment/EarLibClassLoader.java
++++ b/appserver/deployment/javaee-full/src/main/java/org/glassfish/javaee/full/deployment/EarLibClassLoader.java
+@@ -41,6 +41,9 @@
+ 
+ package org.glassfish.javaee.full.deployment;
+ 
++import com.sun.enterprise.deployment.Application;
++import com.sun.enterprise.deployment.util.DOLUtils;
++
+ import com.google.common.base.Function;
+ import com.google.common.collect.ImmutableList;
+ import com.google.common.collect.Iterators;
+@@ -57,8 +60,11 @@ import java.util.Iterator;
+  */
+ public class EarLibClassLoader extends ASURLClassLoader
+ {
+-    public EarLibClassLoader(URL[] urls, ClassLoader classLoader) {
++    private final Application application;
++
++    public EarLibClassLoader(URL[] urls, ClassLoader classLoader, Application application) {
+         super(classLoader); 
++        this.application = application;
+         enableCurrentBeforeParent();
+         for (URL url : urls) {
+             super.addURL(url);
+@@ -95,6 +101,16 @@ public class EarLibClassLoader extends ASURLClassLoader
+ 
+     @Override
+     protected String getClassLoaderName() {
+-        return "EarLibClassLoader";
++        return "EarLibClassLoader (whitelist="+application.isWhitelistEnabled()+")";
++    }
++
++    @Override
++    protected boolean isWhitelistEnabled() {
++        return application.isWhitelistEnabled();
++    }
++
++    @Override
++    protected boolean isWhiteListed(String className) {
++        return DOLUtils.isWhiteListed(application, className);
+     }
+ }
