@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<web-app xmlns="http://java.sun.com/xml/ns/javaee"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+	version="2.5"
+	>
+	
+	<welcome-file-list>
+		<welcome-file>index.html</welcome-file>
+	</welcome-file-list>
+	
+	<listener>
+		<listener-class>com.github.rtwruck.app.ContextListener</listener-class>
+	</listener>
+	<listener>
+		<listener-class>com.github.rtwruck.web.ContextListener</listener-class>
+	</listener>
+	
+	<servlet>
+		<servlet-name>index</servlet-name>
+		<servlet-class>com.github.rtwruck.web.IndexServlet</servlet-class>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>index</servlet-name>
+		<url-pattern>*.html</url-pattern>
+	</servlet-mapping>
+</web-app>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE glassfish-application PUBLIC "-//GlassFish.org//DTD GlassFish Application Server 3.1 Java EE Application 6.0//EN" "http://glassfish.org/dtds/glassfish-application_6_0-1.dtd">
+
+<glassfish-application>
+	<!--classloading-delegate>false</classloading-delegate-->
+
+	<whitelist-package>org.xml.sax</whitelist-package>
+	<whitelist-package>org.w3c.dom</whitelist-package>
+
+	<whitelist-package>org.objectweb.asm</whitelist-package>
+
+</glassfish-application>

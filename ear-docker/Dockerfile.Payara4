@@ -1,0 +1,8 @@
+# Payara version
+ARG PAYARA_VERSION=4.181
+
+FROM payara/server-full:${PAYARA_VERSION}
+
+COPY target/*.jar glassfish/domains/domain1/lib
+
+COPY target/*.ear deployments/
